@@ -67,18 +67,24 @@ class productsList extends CBitrixComponent{
                     array("ID", "NAME")
                 );
                 $count = $res->SelectedRowsCount();
+                $idsForPrice = array();
                 while($ar_fields = $res->GetNext()) :
+                    $idsForPrice[] = $ar_fields["ID"];
                     $items[$ar_fields["ID"]]["NAME"] = $ar_fields["NAME"];
+                endwhile;
+
+
+                if ($idsForPrice) :
                     $db_res = CPrice::GetList(
                         array(),
                         array(
-                            "PRODUCT_ID" => $ar_fields["ID"]
+                            "PRODUCT_ID" => $idsForPrice
                         )
                     );
-                    if ($ar_res = $db_res->Fetch()) {
-                        $items[$ar_fields["ID"]]["PRICE"] = $ar_res["PRICE"];
-                    }
-                endwhile;
+                    while ($ar_res = $db_res->Fetch()) :
+                        $items[$ar_res["ID"]]["PRICE"] = $ar_res["PRICE"];
+                    endwhile;
+                endif;
             else:
 
             endif;
